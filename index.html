@@ -1,98 +1,596 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <title>Sväljövningar och sväljmanövrar</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Station 3 – Sväljmanövrar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --ink: #1a1a2e;
+      --paper: #f5f0e8;
+      --cream: #ede8db;
+      --accent: #5c7a6b;
+      --accent-light: #8aab9a;
+      --rule: #c8bfae;
+      --gold: #b5925a;
+      --red: #8b3a3a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 300;
+      background-color: var(--paper);
+      color: var(--ink);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* Subtle paper texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.03) 28px, rgba(0,0,0,0.03) 29px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
       max-width: 900px;
-      margin: 40px auto;
-      line-height: 1.6;
-      background: #f9fafc;
+      margin: 0 auto;
+      padding: 60px 40px 100px;
     }
-    h1, h2 {
+
+    /* Header */
+    .site-header {
       text-align: center;
+      margin-bottom: 70px;
+      padding-bottom: 40px;
+      border-bottom: 2px solid var(--rule);
     }
-    .section {
-      margin-top: 60px;
-      padding: 20px;
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+    .site-header .eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      font-weight: 600;
     }
-    .exercise {
-      margin-bottom: 50px;
+
+    .site-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.2;
     }
-    iframe {
-      width: 100%;
-      height: 315px;
-      border: none;
+
+    .site-header .subtitle {
       margin-top: 10px;
+      font-size: 1rem;
+      color: #555;
+      font-style: italic;
     }
-    .note {
-      background: #fff7d6;
-      padding: 10px;
-      border-left: 5px solid #e6c200;
-      margin-top: 10px;
-      border-radius: 5px;
+
+    /* Station sections */
+    .station {
+      margin-bottom: 80px;
+    }
+
+    .station-header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .station-badge {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 2px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .station-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* Info block */
+    .info-block {
+      background: var(--cream);
+      border-left: 3px solid var(--gold);
+      padding: 18px 22px;
+      margin-bottom: 28px;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .info-block .label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .info-block p {
       font-size: 0.95rem;
+      color: #444;
+    }
+
+    /* Instructions */
+    .instructions {
+      margin-bottom: 36px;
+    }
+
+    .instructions ol {
+      padding-left: 20px;
+    }
+
+    .instructions li {
+      font-size: 0.97rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    /* Video grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 28px;
+      margin-bottom: 20px;
+    }
+
+    .video-card {
+      background: white;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+
+    .video-card:hover {
+      box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+      transform: translateY(-2px);
+    }
+
+    .video-card-label {
+      padding: 14px 18px 10px;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
+      border-bottom: 1px solid var(--rule);
+      background: var(--cream);
+    }
+
+    .video-card-label .sub {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 300;
+      font-style: italic;
+      color: #666;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      background: #111;
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+
+    /* Table variant for del 2 */
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .evidence-card {
+      background: white;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+
+    .evidence-card:hover {
+      box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+      transform: translateY(-2px);
+    }
+
+    .evidence-card-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 640px) {
+      .evidence-card-inner { grid-template-columns: 1fr; }
+      .video-grid { grid-template-columns: 1fr; }
+    }
+
+    .evidence-meta {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid var(--rule);
+    }
+
+    .evidence-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    .evidence-title .latin {
+      display: block;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.78rem;
+      font-style: italic;
+      color: #777;
+      font-weight: 300;
+      margin-top: 3px;
+    }
+
+    .evidence-note {
+      font-size: 0.84rem;
+      color: #555;
+      line-height: 1.55;
+      border-left: 2px solid var(--accent-light);
+      padding-left: 10px;
+      margin-top: 10px;
+    }
+
+    /* Multi-video layout */
+    .multi-video {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .multi-video .video-wrapper + .video-wrapper {
+      border-left: 1px solid var(--rule);
+    }
+
+    /* Text-only card */
+    .text-card {
+      background: white;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .text-card-header {
+      background: var(--cream);
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid var(--rule);
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .text-card-body {
+      padding: 16px 18px;
+      font-size: 0.88rem;
+      color: #444;
+      line-height: 1.65;
+    }
+
+    /* Divider */
+    .station-divider {
+      border: none;
+      border-top: 2px solid var(--rule);
+      margin: 72px 0;
+      position: relative;
+    }
+
+    .station-divider::before {
+      content: '✦';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--paper);
+      padding: 0 14px;
+      color: var(--rule);
+      font-size: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: #999;
+      padding-top: 40px;
+      border-top: 1px solid var(--rule);
+    }
+
+    /* Animations */
+    .station {
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .station:nth-child(2) { animation-delay: 0.1s; }
+    .station:nth-child(3) { animation-delay: 0.2s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
+  <div class="page">
 
-<h1>Sväljmanövrar och Sväljövningar</h1>
+    <header class="site-header">
+      <div class="eyebrow">Logopedi – Klinisk träning</div>
+      <h1>Station 3 – Sväljmanövrar</h1>
+      <p class="subtitle">Kompensatoriska och rehabiliterande tekniker</p>
+    </header>
 
-<div class="section">
-  <h2>Sväljmanövrar</h2>
+    <!-- ═══════════════════════════════════════ DEL 1 ═══════════════════════════════════════ -->
+    <section class="station">
+      <div class="station-header">
+        <span class="station-badge">Del 1 · 15 min</span>
+        <h2 class="station-title">Saussure</h2>
+      </div>
 
-  <div class="exercise">
-    <h3>Olika huvudpositioner: Chin tuck, Head tilt, huvudrotation</h3>
-    <iframe src="https://www.youtube.com/embed/-tNREQ1
-  </div>
+      <div class="info-block">
+        <div class="label">Material</div>
+        <p>Vatten, skedar, näsmugg, pappersmuggar, saxar</p>
+      </div>
 
-  <div class="exercise">
-    <h3>Kraftfull sväljning</h3>
-    <iframe src="https://www.youtube.com/embed/wKmJdCe7aKs"
-            class="exercise">
-    <h3>Supraglottal sväljning</h3>
-    <iframe src="https://www.youtube.com/embed/Ga5ijAKn9SI/div>
+      <div class="instructions">
+        <ol>
+          <li>Klipp en egen näsmugg och använd den under övningarna.</li>
+          <li>Turas om att instruera varandra att göra någon av följande kompensatoriska manövrar i samband med sväljningen:</li>
+        </ol>
+      </div>
 
-  <div class="exercise">
-    <h3>Supersupraglottal sväljning</h3>
-    <iframe src="https://www.youtube.com/embed/C2HIepSWG84"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreenwww.youtube.com/embed/NHZ5g8roe_A"
-            referrerpolicy="strict-origin-äljövningar – Evidens och kontraindikationer</h2>
+      <div class="section-label">Sväljmanövrar</div>
 
-  <div class="exercise">
-    <h3>Shakerövning / Modifierat huvudlyft</h3>
+      <div class="video-grid">
 
-    <iframe src="https://www.youtube.com/embed/ME4BYab4ot4"
-            reftps://www.youtube.com/embed/GWJ6WnU68fI"
-            referrerpolicy="strict-origin-when-cross-origin"
-           idra till bättre öppning av ÖES och minskad aspiration efter sväljningen.
-    </div>
-  </div>
+        <div class="video-card">
+          <div class="video-card-label">
+            Olika huvudpositioner
+            <span class="sub">Chin tuck · Head tilt · Huvudrotation</span>
+          </div>
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/-tNREQ1_Q2M"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy" title="Huvudpositioner vid sväljning"></iframe>
+          </div>
+        </div>
 
-  <div class="exercise">
-    <h3>Käkövning med motstånd (JOE – Jaw Opening Exercise)</h3>
+        <div class="video-card">
+          <div class="video-card-label">Kraftfull sväljning</div>
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/wKmJdCe7aKs"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy" title="Kraftfull sväljning"></iframe>
+          </div>
+        </div>
 
-    <div class="note">
-      Isometrisk JOE: öppna munnen mot yttre motstånd i 60 sek × 3.<br>
-      Isotonisk JOE: 30 repetitioner mot motstånd.<br><br>
-      Visst stöd för bättre öppning av ÖES, höjning av tungbenet och snabbare passage.<br>
-      Få studier. Eventuellt bättre än Shaker.
-    </div>
-  </div>
+        <div class="video-card">
+          <div class="video-card-label">Supraglottal sväljning</div>
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/Ga5ijAKn9SI"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy" title="Supraglottal sväljning"></iframe>
+          </div>
+        </div>
 
-  <div class="exercise">
-    <h3>Masakomanöver</h3>
+        <div class="video-card">
+          <div class="video-card-label">Supersupraglottal sväljning</div>
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/C2HIepSWG84"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy" title="Supersupraglottal sväljning"></iframe>
+          </div>
+        </div>
 
-    <iframe src="https://www.youtube.com/embed/XdSLcqfS_dU"
-            referrer     Ger mer rörelse i bakre svalgväggen.<br>
-      Undvik efter tungoperation.
-    </div>
-  </div>
+        <div class="video-card">
+          <div class="video-card-label">Mendelsohns manöver</div>
+          <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/NHZ5g8roe_A"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy" title="Mendelsohns manöver"></iframe>
+          </div>
+        </div>
+
+      </div><!-- /video-grid -->
+    </section>
+
+    <hr class="station-divider" />
+
+    <!-- ═══════════════════════════════════════ DEL 2 ═══════════════════════════════════════ -->
+    <section class="station">
+      <div class="station-header">
+        <span class="station-badge">Del 2b · 15 min</span>
+        <h2 class="station-title">Sväljmanövrar – träning av sväljningen</h2>
+      </div>
+
+      <div class="info-block" style="border-left-color: var(--red);">
+        <div class="label" style="color: var(--red);">Mål</div>
+        <p>Testa på rehabiliterande sväljövningar. Träna på att instruera och förklara sväljmanövrar.</p>
+      </div>
+
+      <div class="info-block">
+        <div class="label">Material</div>
+        <p>Madrass/säng, boll, metallskedar, muggar med kallt vatten, sax</p>
+      </div>
+
+      <div class="instructions">
+        <ol>
+          <li>Träna på att instruera varandra hur man gör sväljmanövrar. Som patient kan man gärna simulera vissa svårigheter, t.ex. afasi. Diska skedarna noga och torka dem väl efteråt.</li>
+          <li>Om tid finns: Klipp en egen munskärm av en pappersmugg bara för att kunna känna hur det känns. (Detta ska man inte göra med riktiga klienter.)</li>
+        </ol>
+      </div>
+
+      <div class="section-label">Sväljövningar med evidens</div>
+
+      <div class="evidence-grid">
+
+        <!-- Shaker -->
+        <div class="evidence-card">
+          <div class="evidence-card-inner">
+            <div class="evidence-meta">
+              <div>
+                <div class="evidence-title">
+                  Shakerövning &amp; Modifierat huvudlyft
+                </div>
+                <div class="evidence-note">
+                  Varierande resultat av studier. Kan bidra till bättre öppning av ÖES och minskad aspiration efter sväljningen.
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="multi-video">
+                <div class="video-wrapper">
+                  <iframe src="https://www.youtube.com/embed/ME4BYab4ot4"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen loading="lazy" title="Shakerövning"></iframe>
+                </div>
+                <div class="video-wrapper">
+                  <iframe src="https://www.youtube.com/embed/GWJ6WnU68fI"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen loading="lazy" title="Modifierat huvudlyft"></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- JOE – text only -->
+        <div class="text-card">
+          <div class="text-card-header">
+            Käkövning med motstånd (JOE)
+            <span class="sub" style="font-family:'Source Sans 3',sans-serif; font-size:0.78rem; font-style:italic; color:#777; font-weight:300; display:block; margin-top:3px;">Jaw Opening Exercise / Jaw Opening Against Resistance</span>
+          </div>
+          <div class="text-card-body">
+            <p><strong>Isometric JOE:</strong> Attempt to open mouth against an external force for 60 seconds. Repeat the hold three times.</p>
+            <p style="margin-top:8px;"><strong>Isotonic JOE:</strong> Perform 30 consecutive repetitions of mouth opening against the resistance of a rubber ball.</p>
+            <div class="evidence-note" style="margin-top:14px;">
+              Visst stöd för bättre öppning av ÖES, höjning av tungbenet och snabbare pharyngeal passage. Men endast ett fåtal studier ännu. Ev. bättre än Shaker.
+            </div>
+          </div>
+        </div>
+
+        <!-- Masako -->
+        <div class="evidence-card">
+          <div class="evidence-card-inner">
+            <div class="evidence-meta">
+              <div>
+                <div class="evidence-title">Masakomanöver</div>
+                <div class="evidence-note">
+                  Gör att bakre svalgväggen rör sig mera för att kompensera att tungan inte trycker mot. Undvik efter tungoperation.
+                </div>
+              </div>
+            </div>
+            <div class="video-wrapper">
+              <iframe src="https://www.youtube.com/embed/XdSLcqfS_dU"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen loading="lazy" title="Masakomanöver"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Taktil-termal -->
+        <div class="evidence-card">
+          <div class="evidence-card-inner">
+            <div class="evidence-meta">
+              <div>
+                <div class="evidence-title">
+                  Taktil-termalstimulering
+                  <span class="latin">Isstimulering</span>
+                </div>
+                <div class="evidence-note">
+                  Varierande resultat av studier. Kan kombinera med E-stim. Bäst nytta då man är helt 0 per os.
+                </div>
+              </div>
+            </div>
+            <div class="video-wrapper">
+              <iframe src="https://www.youtube.com/embed/ukfdL7FNxJo"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen loading="lazy" title="Taktil-termalstimulering"></iframe>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /evidence-grid -->
+
+      <!-- Träningsredskap -->
+      <div class="section-label" style="margin-top: 48px;">Träningsredskap</div>
+
+      <div class="text-card">
+        <div class="text-card-header">Munskärm</div>
+        <div class="text-card-body">
+          <p>Munskärmen placeras innanför läpparna, utanför tänderna.</p>
+          <p style="margin-top:8px;">Dra i ringen rakt ut och håll emot under 5–10 sekunder. Upprepa 3 ggr (3 ggr per dag, 4 veckor).</p>
+        </div>
+      </div>
+
+    </section>
+
+    <footer>
+      Station 3 – Sväljmanövrar &nbsp;·&nbsp; Logopedi klinisk träning
+    </footer>
+
+  </div><!-- /page -->
+</body>
+</html>
 
